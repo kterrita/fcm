@@ -12,11 +12,14 @@ or intended publication of such source code.
 */
 package ee.beleychev.fcm.repository;
 
+import ee.beleychev.fcm.domain.FuelConsumptionRequest;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 /**
  * @author beleychev
  */
-@RepositoryRestResource(collectionResourceRel = "fuelConsumptions")
-public class FuelConsumptionRequestRepository {
+@RepositoryRestResource(collectionResourceRel = "fuelConsumptionRequests", path = "fuelConsumptionRequests")
+public interface FuelConsumptionRequestRepository extends JpaRepository<FuelConsumptionRequest, Long> {
+
 }
