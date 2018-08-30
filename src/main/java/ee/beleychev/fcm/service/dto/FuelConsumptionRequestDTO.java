@@ -1,15 +1,3 @@
-/*
-FuelConsumptionRequestDTO.java
-*
-Avaya Inc. - Proprietary (Restricted)
-Solely for authorized persons having a need to know
-pursuant to Company instructions.
-*
-Copyright © 2008-2018 Avaya Inc. All rights reserved.
-THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF Avaya Inc.
-The copyright notice above does not evidence any actual
-or intended publication of such source code.
-*/
 package ee.beleychev.fcm.service.dto;
 
 import ee.beleychev.fcm.domain.FuelConsumptionRequest;
@@ -30,13 +18,16 @@ public class FuelConsumptionRequestDTO implements Serializable {
     private String fuelType;
 
     @NotBlank
+    private Float price;
+
+    @NotBlank
     private Float volume;
 
     @NotBlank
     private Instant date;
 
     @NotBlank
-    private String driverId;
+    private Long driverId;
 
     public FuelConsumptionRequestDTO() {
         // Empty constructor needed for Jackson.
@@ -45,6 +36,7 @@ public class FuelConsumptionRequestDTO implements Serializable {
     public FuelConsumptionRequestDTO(FuelConsumptionRequest fuelConsumptionRequest) {
         this.id = fuelConsumptionRequest.getId();
         this.fuelType = fuelConsumptionRequest.getFuelType();
+        this.price = fuelConsumptionRequest.getPrice();
         this.volume = fuelConsumptionRequest.getVolume();
         this.date = fuelConsumptionRequest.getDate();
         this.driverId = fuelConsumptionRequest.getDriverId();
@@ -66,6 +58,14 @@ public class FuelConsumptionRequestDTO implements Serializable {
         this.fuelType = fuelType;
     }
 
+    public Float getPrice() {
+        return price;
+    }
+
+    public void setPrice(Float price) {
+        this.price = price;
+    }
+
     public Float getVolume() {
         return volume;
     }
@@ -82,11 +82,11 @@ public class FuelConsumptionRequestDTO implements Serializable {
         this.date = date;
     }
 
-    public String getDriverId() {
+    public Long getDriverId() {
         return driverId;
     }
 
-    public void setDriverId(String driverId) {
+    public void setDriverId(Long driverId) {
         this.driverId = driverId;
     }
 
@@ -94,9 +94,10 @@ public class FuelConsumptionRequestDTO implements Serializable {
     public String toString() {
         return "FuelConsumptionRequestDTO{" +
                 "fuelType='" + fuelType + '\'' +
+                ", price=" + price +
                 ", volume=" + volume +
                 ", date=" + date +
-                ", driverId='" + driverId + '\'' +
+                ", driverId=" + driverId +
                 '}';
     }
 }

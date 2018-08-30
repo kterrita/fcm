@@ -1,15 +1,3 @@
-/*
-FuelConsumptionRequest.java
-*
-Avaya Inc. - Proprietary (Restricted)
-Solely for authorized persons having a need to know
-pursuant to Company instructions.
-*
-Copyright © 2008-2018 Avaya Inc. All rights reserved.
-THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF Avaya Inc.
-The copyright notice above does not evidence any actual
-or intended publication of such source code.
-*/
 package ee.beleychev.fcm.domain;
 
 import javax.persistence.*;
@@ -32,8 +20,12 @@ public class FuelConsumptionRequest implements Serializable {
     private Long id;
 
     @NotNull
-    @Column(name = "fuel_type", nullable = false)
+    @Column(nullable = false)
     private String fuelType;
+
+    @NotNull
+    @Column(nullable = false)
+    private Float price;
 
     @NotNull
     @Column(nullable = false)
@@ -45,7 +37,7 @@ public class FuelConsumptionRequest implements Serializable {
 
     @NotNull
     @Column(nullable = false)
-    private String driverId;
+    private Long driverId;
 
     public long getId() {
         return id;
@@ -61,6 +53,14 @@ public class FuelConsumptionRequest implements Serializable {
 
     public void setFuelType(String fuelType) {
         this.fuelType = fuelType;
+    }
+
+    public Float getPrice() {
+        return price;
+    }
+
+    public void setPrice(Float price) {
+        this.price = price;
     }
 
     public float getVolume() {
@@ -79,11 +79,11 @@ public class FuelConsumptionRequest implements Serializable {
         this.date = date;
     }
 
-    public String getDriverId() {
+    public Long getDriverId() {
         return driverId;
     }
 
-    public void setDriverId(String driverId) {
+    public void setDriverId(Long driverId) {
         this.driverId = driverId;
     }
 
@@ -94,11 +94,7 @@ public class FuelConsumptionRequest implements Serializable {
         if (o == null || getClass() != o.getClass())
             return false;
         FuelConsumptionRequest that = (FuelConsumptionRequest) o;
-        return id == that.id &&
-                Float.compare(that.volume, volume) == 0 &&
-                Objects.equals(fuelType, that.fuelType) &&
-                Objects.equals(date, that.date) &&
-                Objects.equals(driverId, that.driverId);
+        return Objects.equals(id, that.id);
     }
 
     @Override
@@ -109,7 +105,11 @@ public class FuelConsumptionRequest implements Serializable {
     @Override
     public String toString() {
         return "FuelConsumptionRequest{" +
-                "id=" + id +
+                "fuelType='" + fuelType + '\'' +
+                ", price=" + price +
+                ", volume=" + volume +
+                ", date=" + date +
+                ", driverId=" + driverId +
                 '}';
     }
 }
