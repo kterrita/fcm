@@ -1,5 +1,6 @@
 package ee.beleychev.fcm.service;
 
+import ee.beleychev.fcm.domain.FuelConsumptionRequest;
 import ee.beleychev.fcm.domain.projection.*;
 import ee.beleychev.fcm.repository.FuelConsumptionRequestRepository;
 import ee.beleychev.fcm.util.ProjectionConverter;
@@ -106,6 +107,11 @@ public class FuelConsumptionRequestService {
         return summaries.stream()
                 .map(ProjectionConverter::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    public void saveAll(List<FuelConsumptionRequest> fuelConsumptionRequestList) {
+        LOGGER.info("Saving all requests");
+        fuelConsumptionRequestRepository.saveAll(fuelConsumptionRequestList);
     }
 
 }

@@ -17,7 +17,7 @@ import java.util.List;
 @RepositoryRestResource(collectionResourceRel = "fuelConsumptionRequests", path = "fuelConsumptionRequests")
 public interface FuelConsumptionRequestRepository extends JpaRepository<FuelConsumptionRequest, Long> {
     @Query(nativeQuery = true, value =
-            "SELECT EXTRACT(MONTH from date) AS MONTH, SUM(price * volume) AS TOTAL "
+            "SELECT EXTRACT(MONTH from date) AS MONTH, SUM(price * volume) AS TOTAL, driver_id AS DRIVERID "
                     + "FROM FUEL_CONSUMPTION_REQUEST GROUP BY MONTH "
                     + "ORDER BY month")
     List<TotalMonthFuelRequestSummary> getTotalGroupByMonth();
