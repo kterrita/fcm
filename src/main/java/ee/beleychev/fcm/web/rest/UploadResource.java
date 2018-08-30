@@ -3,22 +3,16 @@ package ee.beleychev.fcm.web.rest;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import ee.beleychev.fcm.domain.FcmJsonParserException;
 import ee.beleychev.fcm.domain.FuelConsumptionRequest;
-import ee.beleychev.fcm.exception.StorageFileNotFoundException;
-import ee.beleychev.fcm.service.FuelConsumptionRequestService;
-import ee.beleychev.fcm.service.StorageService;
+import ee.beleychev.fcm.repository.FuelConsumptionRequestRepository;
 import ee.beleychev.fcm.util.FcmJsonParser;
 import org.json.simple.JSONArray;
-import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -33,55 +27,69 @@ public class UploadResource {
     private static final Logger LOGGER = LoggerFactory.getLogger(UploadResource.class);
     private static final String MESSAGE = "message";
     private static final String REDIRECT = "redirect:/";
-    private final StorageService storageService;
-    private final FuelConsumptionRequestService fuelConsumptionRequestService;
+    private final FuelConsumptionRequestRepository fuelConsumptionRequestRepository;
 
     @Autowired
-    public UploadResource(StorageService storageService, FuelConsumptionRequestService fuelConsumptionRequestService) {
-        this.storageService = storageService;
-        this.fuelConsumptionRequestService = fuelConsumptionRequestService;
+    public UploadResource(FuelConsumptionRequestRepository fuelConsumptionRequestRepository) {
+        this.fuelConsumptionRequestRepository = fuelConsumptionRequestRepository;
     }
 
+    /**
+     * Creates and persists new request
+     *
+     * @param fuelConsumptionRequest request
+     * @return created request
+     */
+    @PostMapping("/request")
+    public @ResponseBody
+    FuelConsumptionRequest newRequest(@RequestBody FuelConsumptionRequest fuelConsumptionRequest) {
+        return fuelConsumptionRequestRepository.save(fuelConsumptionRequest);
+    }
+
+    /**
+     * View of upload form
+     *
+     * @return uploadForm.html
+     */
     @GetMapping("/")
     public String listUploadedFiles() {
         return "uploadForm";
     }
 
+    /**
+     * Handles uploaded file and saves bunch of json as requests
+     *
+     * @param file               uploaded file
+     * @param redirectAttributes redirectAttributes
+     * @return view with error or success info
+     * @throws FcmJsonParserException in case of exception while creating JSON array from file
+     */
     @PostMapping("/")
     public String handleFileUpload(@RequestParam("file") MultipartFile file,
-            RedirectAttributes redirectAttributes) {
-        storageService.store(file);
+            RedirectAttributes redirectAttributes) throws FcmJsonParserException {
         try {
-            JSONArray jsonArray = FcmJsonParser.getJsonFromFile(storageService.loadAsResource(file.getOriginalFilename()));
+            JSONArray jsonArray = FcmJsonParser.getJsonFromFile(file);
             ObjectMapper mapper = new ObjectMapper();
             mapper.registerModule(new JavaTimeModule());
             List<FuelConsumptionRequest> requestsToSave = mapper.readValue(jsonArray.toJSONString(), new TypeReference<List<FuelConsumptionRequest>>() {
             });
-            fuelConsumptionRequestService.saveAll(requestsToSave);
+            fuelConsumptionRequestRepository.saveAll(requestsToSave);
         }
-        catch (ParseException e) {
-            LOGGER.error("Error during parsing file", e);
+        catch (IOException e) {
+            LOGGER.error("Error during getting file", e);
             redirectAttributes.addFlashAttribute(MESSAGE,
-                    "Error during parsing file " + file.getOriginalFilename() + "!");
+                    "IO Error during getting file " + file.getOriginalFilename() + "!");
             return REDIRECT;
         }
-        catch (IOException e2) {
-            LOGGER.error("Error during getting file", e2);
+        catch (RuntimeException e2) {
+            LOGGER.error("Error", e2);
             redirectAttributes.addFlashAttribute(MESSAGE,
-                    "Error during getting file " + file.getOriginalFilename() + "!");
+                    "Unexpected error during getting file " + file.getOriginalFilename() + "!");
             return REDIRECT;
-        }
-        catch (RuntimeException e3) {
-            LOGGER.error("Error", e3);
         }
 
         redirectAttributes.addFlashAttribute(MESSAGE,
                 "Your fuel request successfully uploaded " + file.getOriginalFilename() + "!");
         return REDIRECT;
-    }
-
-    @ExceptionHandler(StorageFileNotFoundException.class)
-    public ResponseEntity handleStorageFileNotFound(StorageFileNotFoundException exc) {
-        return ResponseEntity.notFound().build();
     }
 }
