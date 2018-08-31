@@ -3,14 +3,16 @@ package ee.beleychev.fcm.web.rest;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import ee.beleychev.fcm.domain.FcmJsonParserException;
 import ee.beleychev.fcm.domain.FuelConsumptionRequest;
+import ee.beleychev.fcm.exception.FcmJsonParserException;
 import ee.beleychev.fcm.repository.FuelConsumptionRequestRepository;
 import ee.beleychev.fcm.util.FcmJsonParser;
 import org.json.simple.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,8 +44,9 @@ public class UploadResource {
      */
     @PostMapping("/request")
     public @ResponseBody
-    FuelConsumptionRequest newRequest(@RequestBody FuelConsumptionRequest fuelConsumptionRequest) {
-        return fuelConsumptionRequestRepository.save(fuelConsumptionRequest);
+    ResponseEntity<FuelConsumptionRequest> newRequest(@RequestBody FuelConsumptionRequest fuelConsumptionRequest) {
+        FuelConsumptionRequest request = fuelConsumptionRequestRepository.save(fuelConsumptionRequest);
+        return new ResponseEntity<>(request, HttpStatus.CREATED);
     }
 
     /**

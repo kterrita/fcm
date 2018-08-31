@@ -1,4 +1,4 @@
-package ee.beleychev.fcm.domain;
+package ee.beleychev.fcm.exception;
 
 /**
  * @author beleychev

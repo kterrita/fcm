@@ -60,7 +60,7 @@ public class FuelConsumptionRequestResource {
      * @return the ResponseEntity with status 200 (OK) and the list of {@link TotalMonthFuelRequestSummaryDTO} in body
      */
     @GetMapping(value = "/month-report/{month}")
-    public List<MonthlyFuelRequestSummaryDTO> getMonthStatistic(@PathVariable Integer month) {
+    public List<MonthlyFuelRequestSummaryDTO> getSpecifiedMonthStatistic(@PathVariable Integer month) {
         List<MonthlyFuelRequestSummaryDTO> summaries = fuelConsumptionRequestService.getFuelConsumptionRequestByMonth(month);
         summaries.forEach(request -> LOGGER.info("{}", request));
         return summaries;
@@ -74,7 +74,7 @@ public class FuelConsumptionRequestResource {
      * @return the ResponseEntity with status 200 (OK) and the list of {@link TotalMonthFuelRequestSummaryDTO} in body
      */
     @GetMapping(value = "/month-report/{month}/driver/{driverId}")
-    public List<MonthlyFuelRequestSummaryDTO> getMonthStatisticForDriver(@PathVariable Integer month, @PathVariable Long driverId) {
+    public List<MonthlyFuelRequestSummaryDTO> getSpecifiedMonthStatisticForDriver(@PathVariable Integer month, @PathVariable Long driverId) {
         List<MonthlyFuelRequestSummaryDTO> summaries = fuelConsumptionRequestService.getFuelConsumptionRequestByMonthAndDriverId(month, driverId);
         summaries.forEach(request -> LOGGER.info("{}", request));
         return summaries;

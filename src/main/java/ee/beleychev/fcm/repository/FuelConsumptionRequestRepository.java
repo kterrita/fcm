@@ -18,7 +18,7 @@ import java.util.List;
 public interface FuelConsumptionRequestRepository extends JpaRepository<FuelConsumptionRequest, Long> {
     @Query(nativeQuery = true, value =
             "SELECT EXTRACT(MONTH from date) AS MONTH, SUM(price * volume) AS TOTAL, driver_id AS DRIVERID "
-                    + "FROM FUEL_CONSUMPTION_REQUEST GROUP BY MONTH "
+                    + "FROM FUEL_CONSUMPTION_REQUEST GROUP BY MONTH, DRIVER_ID "
                     + "ORDER BY month")
     List<TotalMonthFuelRequestSummary> getTotalGroupByMonth();
 
@@ -54,7 +54,7 @@ public interface FuelConsumptionRequestRepository extends JpaRepository<FuelCons
             "SELECT EXTRACT(MONTH from date) as MONTH, fuel_Type as FUELTYPE, SUM(volume) as VOLUME, AVG(price) as AVERAGEPRICE, SUM(price * volume) as TOTAL, driver_id as DRIVERID " +
                     "FROM FUEL_CONSUMPTION_REQUEST "
                     + "WHERE driver_id = :driverId "
-                    + "GROUP BY fuel_type, month, driver_id "
+                    + "GROUP BY fuel_type, month "
                     + "ORDER BY month")
     List<MonthlyFuelTypeSummary> getMonthStatisticByFuelTypeAndByDriverId(@Param("driverId") Long driverId);
 }

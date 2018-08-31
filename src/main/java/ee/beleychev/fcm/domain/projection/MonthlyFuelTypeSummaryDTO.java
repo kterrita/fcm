@@ -98,7 +98,8 @@ public class MonthlyFuelTypeSummaryDTO implements MonthlyFuelTypeSummary {
     @Override
     public String toString() {
         return "MonthlyFuelTypeSummaryDTO{" +
-                "fuelType='" + fuelType + '\'' +
+                "month='" + month + '\'' +
+                ", fuelType='" + fuelType + '\'' +
                 ", volume=" + volume +
                 ", averagePrice=" + averagePrice +
                 ", total=" + total +

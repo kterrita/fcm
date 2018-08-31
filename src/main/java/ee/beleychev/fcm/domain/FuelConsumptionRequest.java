@@ -63,11 +63,11 @@ public class FuelConsumptionRequest implements Serializable {
         this.price = price;
     }
 
-    public float getVolume() {
+    public Float getVolume() {
         return volume;
     }
 
-    public void setVolume(float volume) {
+    public void setVolume(Float volume) {
         this.volume = volume;
     }
 
